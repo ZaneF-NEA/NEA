@@ -1,0 +1,45 @@
+function init(self) -- inital state of PC
+	msg.post(".", "acquire_input_focus") -- get input to go to this model
+	msg.post("camera", "acquire_camera_focus") -- get camera to follow player character
+	self.velocity = vmath.vector3(0, 0, 0) -- initial direction and speed, should be 0 at start (before input)
+	self.correction = vmath.vector3() -- to ensure no overlap
+	self.ground_contact = false -- to ensure it can make contact with the ground
+	self.anim = nil -- no current animation when still - default to animation stored in collection (standing animation)
+end
+
+function update(self, dt)
+	self.velocity.y = self.velocity.y + gravity * dt -- gravity
+
+	local pos = go.get_position() -- movement
+	pos = pos + self.velocity * dt
+	go.set_position(pos)
+	update_animations(self) -- animation update
+	
+	self.correction = vmath.vector3() -- reset state
+	self.ground_contact = false
+	self.wall_contact = false
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end
