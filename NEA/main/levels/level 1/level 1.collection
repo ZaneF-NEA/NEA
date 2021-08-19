@@ -1,4 +1,24 @@
 name: "default"
+collection_instances {
+  id: "player character1"
+  collection: "/main/_player character/player character.collection"
+  position {
+    x: 200.0
+    y: 150.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "level1"
@@ -21,26 +41,6 @@ embedded_instances {
   position {
     x: 0.0
     y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-}
-embedded_instances {
-  id: "player character"
-  data: ""
-  position {
-    x: 150.0
-    y: 150.0
     z: 0.0
   }
   rotation {

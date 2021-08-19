@@ -1,4 +1,4 @@
-tile_set: "/main/level.tilesource"
+tile_set: "/main/levels/level.tilesource"
 layers {
   id: "terrain"
   z: 0.0
@@ -1511,7 +1511,7 @@ layers {
 }
 layers {
   id: "objects"
-  z: 1.0
+  z: 0.0
   is_visible: 1
   cell {
     x: 29

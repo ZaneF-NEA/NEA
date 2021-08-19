@@ -71,7 +71,7 @@ show_made_with_defold = 1
 auto_finish_transactions = 1
 
 [input]
-game_binding = /input/game.input_bindingc
+game_binding = /main/_player character/input.input_bindingc
 gamepads = /builtins/input/default.gamepadsc
 repeat_delay = 0.5
 repeat_interval = 0.2
@@ -116,7 +116,7 @@ max_particle_count = 1024
 [physics]
 allow_dynamic_transforms = 0
 contact_impulse_limit = 0.0
-debug = 0
+debug = 1
 debug_alpha = 0.9
 debug_scale = 30.0
 gravity_x = 0.0
