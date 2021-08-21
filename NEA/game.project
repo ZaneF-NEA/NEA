@@ -9,10 +9,6 @@ game_binding = /main/_player character/input.input_bindingc
 use_accelerometer = 0
 gamepads = /builtins/input/default.gamepadsc
 
-[display]
-width = 1280
-height = 720
-
 [script]
 shared_state = 1
 
@@ -28,5 +24,10 @@ input_method = HiddenInputField
 [physics]
 gravity_y = -1000.0
 scale = 0.01
-debug = 1
+debug = 0
+
+[display]
+fullscreen = 0
+dynamic_orientation = 0
+update_frequency = 60
 

@@ -1,0 +1,4 @@
+function init(self)
+	print("Mouse", mouseVector)
+	print("test object", go.get_position())
+end
