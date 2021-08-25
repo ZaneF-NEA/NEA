@@ -1,0 +1,27 @@
+-- the expanding circle is a representation of the sound made by dropping the rock.
+-- if it makes contact with a guard, the guard will investigate.
+
+TIME_ON_SCREEN = 25 -- this is how long it should stay on screen in ms.
+FINAL_DIAMETER = 25 -- the diameter of the object as it vanishes.
+
+function init(self)
+	go.set("#sprite", "scale.y", 1) -- starts from a tiny position and gets bigger over time.
+	go.set("#sprite", "scale.x", 1)
+	sprite.set_constant("#sprite", "tint", vmath.vector4(1, 1, 1, 0.8)) -- change the colour to a grey.
+	self.timeElapsed = 0 -- a measure of how long it has been on screen.
+	self.fadeIncrement = vmath.vector4(0, 0, 0, 1 / TIME_ON_SCREEN)  -- how much it should fade each time
+end
+
+function update(self, dt)
+	go.set("#sprite", "scale.x", go.get("#sprite", "scale.x") + (FINAL_DIAMETER / TIME_ON_SCREEN))
+	go.set("#sprite", "scale.y", go.get("#sprite", "scale.y") + (FINAL_DIAMETER / TIME_ON_SCREEN))
+
+	self.currentFade = go.get("#sprite", "tint")
+	--sprite.set_constant("#character", "tint", vmath.vector4(1, 1, 1, self.currentFade - self.fadeIncrement))
+
+	self.timeElapsed = self.timeElapsed + dt
+	print(self.timeElapsed)
+	if go.get("#sprite", "scale.x") >= FINAL_DIAMETER then
+		go.delete()
+	end
+end

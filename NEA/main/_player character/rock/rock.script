@@ -1,22 +1,21 @@
-local SPEED = 800 -- A constant for speed. This will probably be changed to better values, so I need it up here.
-local GRAVITY = -15
+local SPEED = 300 -- A constant for speed. This will probably be changed to better values, so I need it up here.
 
 function init(self)
 	go.set("#sprite", "scale.y", go.get("#sprite", "scale.y") / 2) -- These two lines quarter the scale. This is to make the rock small
 	go.set("#sprite", "scale.x", go.get("#sprite", "scale.x") / 2) -- but I can still edit it comfortably at a larger scale.
-	self.direction = vmath.normalize(mouseVector - pcLocation) -- this code to move the object to the right toward mouse
+	--print(x1, y1)
+	--self.direction = vmath.normalize(conv_mouse_coords("#render", x, y, z) - pcVector) -- gets vector between mouse coords and pc
 	-- https://forum.defold.com/t/how-do-i-move-object-towards-a-position/19125/3
-
-	-- mouse.y = 163, direction.y = 0??
+	self.velocity = vmath.vector3(0, -SPEED, 0)
 end
 
 function update(self, dt)
-	go.set_position(go.get_position() + (self.direction * SPEED * dt))
+	go.set_position(go.get_position() + (self.velocity * dt))
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("collision_response") then
-		-- create expanding circle for noise
+		factory.create("#circleFactory", go.get_position()) -- creates a circle which manages who "hears" the rock. 
 		-- play sound
 		go.delete() -- deletes rock, no longer necessary and taking up resources
 	end

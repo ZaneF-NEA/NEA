@@ -19,6 +19,46 @@ collection_instances {
     z: 1.0
   }
 }
+collection_instances {
+  id: "guard1"
+  collection: "/main/guard/guard.collection"
+  position {
+    x: 840.848
+    y: 326.664
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+collection_instances {
+  id: "guard"
+  collection: "/main/guard/guard.collection"
+  position {
+    x: 1843.416
+    y: 525.374
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "level1"
@@ -48,6 +88,7 @@ embedded_instances {
   "group: \\\"level\\\"\\n"
   "mask: \\\"player\\\"\\n"
   "mask: \\\"object\\\"\\n"
+  "mask: \\\"enemy\\\"\\n"
   "linear_damping: 0.0\\n"
   "angular_damping: 0.0\\n"
   "locked_rotation: false\\n"
@@ -66,8 +107,8 @@ embedded_instances {
   "}\n"
   ""
   position {
-    x: 0.0
-    y: 0.0
+    x: -8.279
+    y: 3.311
     z: 0.0
   }
   rotation {
