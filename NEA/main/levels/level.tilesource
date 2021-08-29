@@ -1337,6 +1337,15 @@ animations {
   flip_vertical: 0
 }
 animations {
+  id: "node"
+  start_tile: 17
+  end_tile: 17
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 30
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
   id: "rock"
   start_tile: 14
   end_tile: 14

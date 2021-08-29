@@ -3,9 +3,6 @@ local SPEED = 300 -- A constant for speed. This will probably be changed to bett
 function init(self)
 	go.set("#sprite", "scale.y", go.get("#sprite", "scale.y") / 2) -- These two lines quarter the scale. This is to make the rock small
 	go.set("#sprite", "scale.x", go.get("#sprite", "scale.x") / 2) -- but I can still edit it comfortably at a larger scale.
-	--print(x1, y1)
-	--self.direction = vmath.normalize(conv_mouse_coords("#render", x, y, z) - pcVector) -- gets vector between mouse coords and pc
-	-- https://forum.defold.com/t/how-do-i-move-object-towards-a-position/19125/3
 	self.velocity = vmath.vector3(0, -SPEED, 0)
 end
 

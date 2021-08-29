@@ -1,0 +1,81 @@
+function init(self)
+	local map = {
+		a = (b = 6) --3,3
+		b = (a = 6) --9,3
+		c = (b = 2) --9,5
+		d = (c = 1, e = 2) --10,5
+		e = (d = 2) --12,5
+		f = (e = 1) --12,6
+		g = (f = 1, h = 6) --13,6
+		h = (g = 6) --19.6
+	}
+end
+
+local function cell_to_px(cell) -- a cell is 64x64 px. this function gets the centre of a cell in px.
+	return ((cell - 1) * 64) + 32 -- this can be used for both the x and y coord.
+end
+
+local function arrayLength(array)
+	local length = 0
+	for i in array do
+		length = length + 1
+	end
+	return length
+end
+
+local function getLowest(array)
+	local lowest = 1000
+	for i in array do
+		if array[i] < lowest then
+			local lowestIndex = i
+			lowest = array[i]
+		end
+	end
+	return lowestIndex
+end
+
+local function pathfinding(start, goal, array)
+	local open = { }
+	local closed = { } -- open and closed lists
+	table.insert(open, start)
+	while arrayLength(open) > 0 do
+		table.remove(open[getLowest(open)]) -- remove the worst option
+		for node in array do
+			
+	end
+end
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end

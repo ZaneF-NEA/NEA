@@ -1,12 +1,11 @@
 local SPEED = 100
--- local jump_takeoff_speed = 1200
 local SIGHT = 150 -- how far the guard can see (px)
-
 
 -- pre-hashing ids improves performance
 local msg_contact_point_response = hash("contact_point_response")
 local msg_animation_done = hash("animation_done")
 local group_obstacle = hash("ground")
+local group_distraction = hash("distraction")
 local input_left = hash("left")
 local input_right = hash("right")
 local input_jump = hash("jump")
@@ -16,7 +15,7 @@ local anim_idle = hash("stand")
 local anim_jump = hash("jump")
 local anim_fall = hash("jump")
 
-
+local distractionLocation = vmath.vector3()
 
 function init(self)
 	-- this lets us handle input in this script
@@ -41,6 +40,7 @@ function init(self)
 	--tables for parameter 3 for physics.raycast
 	self.playerGroup = { hash("player") }
 	self.levelGroup = {  hash("ground"), hash("danger") }
+	self.investigating = false -- a bool that tracks whether the guard is currently investigating something.
 end
 
 local function play_animation(self, anim)
@@ -72,18 +72,6 @@ local function update_animations(self)
 	end
 end
 
-local function jump(self)
-	-- only allow jump from ground
-	-- (extend this with a counter to do things like double-jumps)
-	if self.ground_contact then
-		-- set take-off SPEED
-		self.velocity.y = jump_takeoff_speed
-		-- play animation
-		play_animation(self, anim_jump)
-		self.ground_contact = false
-	end
-end
-
 local function walk(self)
 	self.velocity.x = SPEED * self.facing
 end
@@ -92,17 +80,35 @@ local function stop(self) -- when waiting
 	self.velocity.x = 0
 end
 
-local function player_detection(self, guardEyes, highRaycast, lowRaycast)
-	if physics.raycast(guardEyes, highRaycast, self.playerGroup) then -- ends the level if spotting player.
+local function player_detection(self, guardEyes, midRaycast, farRaycast)
+	if physics.raycast(guardEyes, farRaycast, self.playerGroup) then
+		for i = 1, SIGHT do
+			walk(self)
+			print("Test")
+		end
+	elseif physics.raycast(guardEyes, midRaycast, self.playerGroup) then -- ends the level if spotting player.
 		print("Level end!") -- send message to end level
 	end
 end
 
-local function obstacle_detection(self, guardEyes, highRaycast, lowRaycast)
+local function obstacle_detection(self, guardEyes, midRaycast, lowRaycast)
 	-- the first conditional checks if there is a wall, the second checks if there is a chasm and the guard turns around when faced with either
-	if physics.raycast(guardEyes, highRaycast, self.levelGroup) or not physics.raycast(guardEyes, lowRaycast, self.levelGroup) then
+	if physics.raycast(guardEyes, midRaycast, self.levelGroup) or not physics.raycast(guardEyes, lowRaycast, self.levelGroup) then
 		self.waitTimer = 0.8  -- triggers guard to wait.
 	end
+end
+
+local function distraction_handling(self, location)
+	if go.get_position().x > location.x then -- face the distraction 
+		self.facing = -1
+	else
+		self.facing = 1
+	end
+	while go.get_position().y ~= location.y do -- walk to distraction (or closest it can get to it)
+		walk(self)
+	end
+	self.investigating = false
+	print("hello")
 end
 
 function update(self, dt)
@@ -121,19 +127,29 @@ function update(self, dt)
 
 	--raycasting points (must be redifined constantly to account for the movement of the guard changing what he is able to see)
 	local guardEyes = vmath.vector3(go.get_position().x + (20 * self.facing), go.get_position().y + 90, 0) -- so the guard doesn't see out of his feet.
-	local highRaycast = vmath.vector3(guardEyes.x + (SIGHT * self.facing), guardEyes.y, 0)
-	local lowRaycast = vmath.vector3(highRaycast.x, highRaycast.y - 100, 0)
-	
-	player_detection(self, guardEyes, highRaycast, lowRaycast) -- the PC can move when the guard isn't, so this must always be happening.
-	if self.waitTimer > 0 then -- if the guard still has time to wait, he will stop here.
+	local midRaycast = vmath.vector3(guardEyes.x + (SIGHT * self.facing), guardEyes.y, 0)
+	local highRaycast = vmath.vector3(midRaycast.x, midRaycast.y + 100, 0) 
+	local lowRaycast = vmath.vector3(midRaycast.x, midRaycast.y - 100, 0)
+	local farRaycast = vmath.vector3(guardEyes.x + (2 * SIGHT * self.facing), guardEyes.y, 0) -- this is so the guard doesn't immediately spot the player and walks to him.
+
+	-- the first two if statements are player detection
+	-- the third is distraction followup
+	-- the fourth is waiting before turning around
+	-- the fifth is normal behaviour
+	if physics.raycast(guardEyes, midRaycast, self.playerGroup) or physics.raycast(guardEyes, highRaycast, self.playerGroup) then -- ends the level if spotting player.
+		print("Level end!") -- send message to end level
+	elseif physics.raycast(guardEyes, farRaycast, self.playerGroup) then -- gets closer to the player if he can vaguely see the PC
+		walk(self)
+	--elseif self.investigating then
+	elseif self.waitTimer > 0 then -- if the guard still has time to wait, he will stop here.
 		stop(self)
 		self.waitTimer = self.waitTimer - dt
 		if self.waitTimer <= 0 then -- this will get the guard to turn around right as they move, rather than when they stop
 			self.facing = -self.facing -- this gives the user a window (which is waitTimer) to move past the guard.
 		end
-	else
+	elseif not self.investigating then -- normal behaviour
 		walk(self)
-		obstacle_detection(self, guardEyes, highRaycast, lowRaycast) -- waitTimer is only ever > 0 when already dealing with an obstacle
+		obstacle_detection(self, guardEyes, midRaycast, lowRaycast) -- waitTimer is only ever > 0 when already dealing with an obstacle
 	end
 end
 
@@ -173,8 +189,12 @@ local function handle_obstacle_contact(self, normal, distance)
 end
 
 function on_message(self, message_id, message, sender)
-	-- check if we received a contact point message
-	if message_id == msg_contact_point_response then
+	--check if message is a rock circle
+	if message.group == group_distraction and not self.investigating then
+		self.investigating = true -- this is to maintain logic on update() and so the guard doesnt respond to two distractions
+		distractionLocation = go.get_position(sender)
+		distraction_handling(self, distractionLocation)
+	elseif message_id == msg_contact_point_response then -- check if we received a contact point message
 		--check that the object is something we consider an obstacle
 		if message.group == group_obstacle then
 			handle_obstacle_contact(self, message.normal, message.distance)
